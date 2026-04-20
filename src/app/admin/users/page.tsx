@@ -119,7 +119,7 @@ export default function UserManagementDashboard() {
   });
 
   const activateUserMutation = useMutation({
-    mutationFn: (id: string) => adminUsersApi.activate(id, user?.id),
+    mutationFn: (id: string) => adminUsersApi.activate(id),
     onSuccess: () => {
       toast.success('User activated successfully');
       refetchUsers();
@@ -443,7 +443,7 @@ export default function UserManagementDashboard() {
                             {user.email}
                           </span>
                           {user.isEmailVerified && (
-                            <CheckCircle className="h-3.5 w-3.5 text-green-500 flex-shrink-0" title="Email verified" />
+                            <CheckCircle className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
                           )}
                         </div>
                         {user.phone && (
@@ -451,7 +451,7 @@ export default function UserManagementDashboard() {
                             <Phone className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
                             <span className="text-foreground">{user.phone}</span>
                             {user.isPhoneVerified && (
-                              <CheckCircle className="h-3.5 w-3.5 text-green-500 flex-shrink-0" title="Phone verified" />
+                              <CheckCircle className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
                             )}
                           </div>
                         )}
@@ -468,7 +468,7 @@ export default function UserManagementDashboard() {
                           {user.status}
                         </span>
                         {user.status === 'PENDING' && (
-                          <Clock className="h-3.5 w-3.5 text-yellow-500" title="Awaiting activation" />
+                          <Clock className="h-3.5 w-3.5 text-yellow-500" />
                         )}
                       </div>
                     </td>
@@ -478,7 +478,7 @@ export default function UserManagementDashboard() {
                           {user.kycStatus || 'NOT_STARTED'}
                         </span>
                         {user.isKycVerified && (
-                          <Shield className="h-3.5 w-3.5 text-green-500" title="KYC verified" />
+                          <Shield className="h-3.5 w-3.5 text-green-500" />
                         )}
                       </div>
                     </td>

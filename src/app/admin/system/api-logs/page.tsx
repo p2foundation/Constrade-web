@@ -72,8 +72,8 @@ export default function ApiLogsPage() {
     
     for (let i = 0; i < 150; i++) {
       const statusCode = statusCodes[Math.floor(Math.random() * statusCodes.length)];
-      const status = statusCode >= 200 && statusCode < 400 ? 'SUCCESS' : 'ERROR';
-      if (Math.random() < 0.05) status = 'TIMEOUT';
+      const status: 'SUCCESS' | 'ERROR' | 'TIMEOUT' = statusCode >= 200 && statusCode < 400 ? 'SUCCESS' : 'ERROR';
+      const finalStatus = Math.random() < 0.05 ? 'TIMEOUT' : status;
       
       const timestamp = new Date(now.getTime() - Math.random() * 24 * 60 * 60 * 1000);
       
@@ -90,9 +90,9 @@ export default function ApiLogsPage() {
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         requestSize: Math.floor(Math.random() * 5000) + 100,
         responseSize: Math.floor(Math.random() * 10000) + 200,
-        status,
-        error: status === 'ERROR' ? 'Invalid authentication credentials' : undefined,
-        payload: status === 'ERROR' ? '{"email":"test@example.com","password":"wrong"}' : undefined
+        status: finalStatus,
+        error: finalStatus === 'ERROR' ? 'Invalid authentication credentials' : undefined,
+        payload: finalStatus === 'ERROR' ? '{"email":"test@example.com","password":"wrong"}' : undefined
       });
     }
     

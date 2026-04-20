@@ -42,6 +42,7 @@ interface Auction {
     type: 'TREASURY_BILL' | 'TREASURY_BOND';
     maturityDate: string;
     couponRate?: number;
+    prospectusUrl?: string;
   };
   auctionType: 'COMPETITIVE' | 'NON_COMPETITIVE';
   announcementDate: string;
@@ -150,10 +151,10 @@ export default function AuctionDetailPage() {
 
   // Submit bid mutation
   const submitBidMutation = useMutation({
-    mutationFn: async (data: { bidType: string; amount: number; yield?: number }) => {
+    mutationFn: async (data: { bidType: string; amount: string; yield?: string }) => {
       return await auctionsApi.submitBid(auctionId, {
-        bidType: data.bidType,
-        amount: data.amount,
+        bidType: data.bidType as "COMPETITIVE" | "NON_COMPETITIVE",
+        amount: parseFloat(data.amount),
         yield: data.yield ? parseFloat(data.yield) : undefined,
       });
     },
@@ -337,7 +338,7 @@ export default function AuctionDetailPage() {
                 </span>
                 {auction.status === 'OPEN' && (
                   <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                    {getTimeRemaining(auction.biddingCloseDate)}
+                    {auction.submissionDeadline && getTimeRemaining(auction.submissionDeadline)}
                   </span>
                 )}
               </div>
@@ -478,7 +479,7 @@ export default function AuctionDetailPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Maximum Bid</p>
-                  <p className="font-medium">₵{auction.maxBidAmount.toLocaleString()}</p>
+                  <p className="font-medium">₵{auction.maxBidAmount?.toLocaleString() ?? 'N/A'}</p>
                 </div>
               </div>
               {auction.priceRange && (
@@ -713,10 +714,21 @@ export default function AuctionDetailPage() {
                     View My Bids
                   </AnimatedButton>
                 )}
-                <AnimatedButton variant="outline" className="w-full">
-                  <Download className="h-4 w-4 mr-2" />
-                  Download Prospectus
-                </AnimatedButton>
+                {auction.security?.prospectusUrl ? (
+                  <AnimatedButton 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => window.open(auction.security.prospectusUrl, '_blank')}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download Prospectus
+                  </AnimatedButton>
+                ) : (
+                  <AnimatedButton variant="outline" className="w-full" disabled>
+                    <Download className="h-4 w-4 mr-2" />
+                    Prospectus Not Available
+                  </AnimatedButton>
+                )}
                 {auction.results && (
                   <AnimatedButton variant="outline" className="w-full">
                     <Eye className="h-4 w-4 mr-2" />
@@ -792,8 +804,8 @@ export default function AuctionDetailPage() {
                 }
                 submitBidMutation.mutate({
                   bidType: bidForm.bidType,
-                  amount: parseFloat(bidForm.amount),
-                  yield: bidForm.yield ? parseFloat(bidForm.yield) : undefined,
+                  amount: bidForm.amount,
+                  yield: bidForm.yield || undefined,
                 });
               }}
               className="p-6 space-y-6"

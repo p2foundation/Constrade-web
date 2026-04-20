@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Search,
   Filter,
@@ -50,6 +50,7 @@ export default function PdSubmissionsPage() {
     data,
     isLoading,
     refetch,
+    error,
   } = useQuery<{ submissions: PdSubmission[]; total: number }, Error>({
     queryKey: ['admin', 'pd-submissions', page, statusFilter],
     queryFn: () =>
@@ -60,8 +61,12 @@ export default function PdSubmissionsPage() {
       }),
     retry: false,
     refetchOnWindowFocus: false,
-    onError: (error: any) => {
-      const status = error?.response?.status;
+  });
+
+  // Handle errors
+  useEffect(() => {
+    if (error) {
+      const status = (error as any)?.response?.status;
 
       if (status === 404) {
         toast.info(
@@ -69,11 +74,11 @@ export default function PdSubmissionsPage() {
         );
       } else {
         toast.error('Failed to load PD submissions', {
-          description: error?.response?.data?.message || 'An unexpected error occurred',
+          description: (error as any)?.response?.data?.message || 'An unexpected error occurred',
         });
       }
-    },
-  });
+    }
+  }, [error]);
 
   const submissions: PdSubmission[] = data?.submissions || [];
   const totalPages = data?.total ? Math.ceil(data.total / limit) : 1;

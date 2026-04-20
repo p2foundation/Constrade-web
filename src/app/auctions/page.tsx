@@ -233,19 +233,19 @@ export default function AuctionsPage() {
   const filteredAuctions = auctions?.filter(auction => {
     const matchesSearch = !searchQuery || 
       auction.security.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      auction.auctionId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      auction.security.isin.toLowerCase().includes(searchQuery.toLowerCase());
+      (auction.auctionId || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (auction.security.isin || '').toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || auction.status === statusFilter;
     const matchesType = typeFilter === 'all' || auction.security.type === typeFilter;
     return matchesSearch && matchesStatus && matchesType;
   })?.sort((a, b) => {
     switch (sortBy) {
       case 'date':
-        return new Date(b.biddingOpenDate).getTime() - new Date(a.biddingOpenDate).getTime();
+        return new Date(b.biddingOpenDate || b.auctionDate).getTime() - new Date(a.biddingOpenDate || a.auctionDate).getTime();
       case 'amount':
         return b.totalAmount - a.totalAmount;
       case 'closing':
-        return new Date(a.biddingCloseDate).getTime() - new Date(b.biddingCloseDate).getTime();
+        return new Date(a.biddingCloseDate || a.auctionDate).getTime() - new Date(b.biddingCloseDate || b.auctionDate).getTime();
       case 'status':
         return a.status.localeCompare(b.status);
       default:
@@ -527,7 +527,7 @@ export default function AuctionsPage() {
                         </span>
                         {auction.status === 'OPEN' && (
                           <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                            {getTimeRemaining(auction.biddingCloseDate)}
+                            {auction.biddingCloseDate && getTimeRemaining(auction.biddingCloseDate)}
                           </span>
                         )}
                       </div>
@@ -551,13 +551,13 @@ export default function AuctionsPage() {
                     <div>
                       <p className="text-xs text-muted-foreground mb-1">Bidding Opens</p>
                       <p className="text-sm font-medium">
-                        {new Date(auction.biddingOpenDate).toLocaleDateString()}
+                        {new Date(auction.biddingOpenDate || auction.auctionDate).toLocaleDateString()}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground mb-1">Bidding Closes</p>
                       <p className="text-sm font-medium">
-                        {new Date(auction.biddingCloseDate).toLocaleDateString()}
+                        {new Date(auction.biddingCloseDate || auction.auctionDate).toLocaleDateString()}
                       </p>
                     </div>
                     <div>
@@ -569,7 +569,7 @@ export default function AuctionsPage() {
                     <div>
                       <p className="text-xs text-muted-foreground mb-1">Min/Max Bid</p>
                       <p className="text-sm font-medium">
-                        ₵{auction.minBidAmount.toLocaleString()} - ₵{auction.maxBidAmount.toLocaleString()}
+                        ₵{auction.minBidAmount.toLocaleString()} - ₵{(auction.maxBidAmount ?? 0).toLocaleString()}
                       </p>
                     </div>
                   </div>

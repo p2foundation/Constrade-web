@@ -40,6 +40,7 @@ interface CorporateBond {
     couponRate: number;
     maturityDate: string;
     faceValue: number;
+    prospectusUrl?: string;
   };
   issueDetails: {
     issueSize: number;
@@ -461,10 +462,21 @@ export default function CorporateBondDetailPage() {
                         <TrendingUp className="h-4 w-4 mr-2" />
                         Submit Bid
                       </AnimatedButton>
-                      <AnimatedButton variant="outline" className="w-full">
-                        <Download className="h-4 w-4 mr-2" />
-                        Download Prospectus
-                      </AnimatedButton>
+                      {mockCorporateBond?.security?.prospectusUrl ? (
+                        <AnimatedButton 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={() => window.open(mockCorporateBond.security.prospectusUrl, '_blank')}
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Download Prospectus
+                        </AnimatedButton>
+                      ) : (
+                        <AnimatedButton variant="outline" className="w-full" disabled>
+                          <Download className="h-4 w-4 mr-2" />
+                          Prospectus Not Available
+                        </AnimatedButton>
+                      )}
                     </>
                   ) : (
                     <>

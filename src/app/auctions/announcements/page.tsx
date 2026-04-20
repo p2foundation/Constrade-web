@@ -61,8 +61,8 @@ export default function AuctionAnnouncementsPage() {
           publishDate: '2025-11-14T09:00:00Z',
           effectiveDate: '2025-11-14',
           auctionDate: '2025-11-21',
-          fileUrl: '/files/tb-091-nov-2025.pdf',
-          fileName: 'TB-091-Auction-Notice-Nov-2025.pdf',
+          fileUrl: '/files/sample-announcement.txt',
+          fileName: 'TB-091-Auction-Notice-Nov-2025.txt',
           fileSize: '245 KB',
           isImportant: true,
           status: 'ACTIVE',
@@ -75,8 +75,8 @@ export default function AuctionAnnouncementsPage() {
           content: 'The Bank of Ghana has updated the Treasury issuance calendar for Q4 2025, including additional auction dates and adjusted target amounts for Treasury bills and government bonds.',
           publishDate: '2025-11-10T14:30:00Z',
           effectiveDate: '2025-11-10',
-          fileUrl: '/files/q4-2025-calendar-update.pdf',
-          fileName: 'Q4-2025-Calendar-Update.pdf',
+          fileUrl: '/files/Q4-2025-Calendar-Update.txt',
+          fileName: 'Q4-2025-Calendar-Update.txt',
           fileSize: '1.2 MB',
           isImportant: false,
           status: 'ACTIVE',
@@ -178,6 +178,40 @@ export default function AuctionAnnouncementsPage() {
       hour: '2-digit',
       minute: '2-digit',
     });
+  };
+
+  const handleDownloadPDF = async (fileUrl: string, fileName: string) => {
+    try {
+      // Fetch the file
+      const response = await fetch(fileUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch file');
+      }
+      
+      // Get the blob
+      const blob = await response.blob();
+      
+      // Create a blob URL
+      const blobUrl = window.URL.createObjectURL(blob);
+      
+      // Create a download link
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = fileName;
+      link.style.display = 'none';
+      
+      // Append to body, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the blob URL
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Failed to download file:', error);
+      // Fallback to opening in new tab
+      window.open(fileUrl, '_blank');
+    }
   };
 
   const getTypeColor = (type: string) => {
@@ -366,10 +400,20 @@ export default function AuctionAnnouncementsPage() {
                             <span>Effective: {formatDate(announcement.effectiveDate)}</span>
                           </div>
                         )}
+                        {announcement.fileSize && (
+                          <div className="flex items-center gap-1">
+                            <FileText className="h-3 w-3" />
+                            <span>PDF: {announcement.fileSize}</span>
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center gap-3">
                         {announcement.fileUrl && (
-                          <AnimatedButton variant="outline" className="text-sm">
+                          <AnimatedButton 
+                            variant="outline" 
+                            className="text-sm"
+                            onClick={() => handleDownloadPDF(announcement.fileUrl!, announcement.fileName!)}
+                          >
                             <Download className="h-3 w-3 mr-1" />
                             Download
                           </AnimatedButton>
@@ -456,7 +500,11 @@ export default function AuctionAnnouncementsPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   {selectedAnnouncement.fileUrl && (
-                    <AnimatedButton variant="outline" className="text-sm">
+                    <AnimatedButton 
+                      variant="outline" 
+                      className="text-sm"
+                      onClick={() => handleDownloadPDF(selectedAnnouncement.fileUrl!, selectedAnnouncement.fileName!)}
+                    >
                       <Download className="h-3 w-3 mr-1" />
                       Download PDF
                     </AnimatedButton>

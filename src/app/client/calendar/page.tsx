@@ -27,7 +27,7 @@ interface BogAuction {
 }
 
 export default function CalendarPage() {
-  const [auctions] = useState<BogAuction[]>(auctionsData.auctions);
+  const [auctions] = useState<BogAuction[]>(auctionsData.auctions as BogAuction[]);
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
 

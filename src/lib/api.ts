@@ -469,6 +469,7 @@ export const getSecurities = securitiesApi.getAll;
 
 export interface Auction {
   id: string;
+  auctionId?: string;
   security: {
     id: string;
     name: string;
@@ -479,8 +480,11 @@ export interface Auction {
     couponRate?: number;
     faceValue: number;
     minDenomination: number;
+    isin?: string;
+    prospectusUrl?: string;
   };
   auctionDate: string;
+  auctionType?: string;
   settlementDate: string;
   status: 'UPCOMING' | 'OPEN' | 'CLOSED' | 'SETTLED' | string;
   totalBids: number;
@@ -489,6 +493,28 @@ export interface Auction {
   maxBidAmount?: number;
   cutoffYield?: number;
   submissionDeadline?: string;
+  biddingOpenDate?: string;
+  biddingCloseDate?: string;
+  priceRange?: {
+    min: number;
+    max: number;
+  };
+  results?: {
+    averageYield: number;
+    bidToCoverRatio: number;
+    totalBids: number;
+    marginalPrice: number;
+    publishedDate: string;
+  };
+  userBid?: {
+    id: string;
+    bidReference: string;
+    quantity: number;
+    price?: number;
+    yield?: number;
+    status: string;
+    submittedAt: string;
+  };
 }
 
 export interface SubmitBidDto {
@@ -671,6 +697,11 @@ export const kycApi = {
 
   getDocuments: async (): Promise<KYCDocument[]> => {
     const response = await apiClient.get('/api/v1/kyc/documents');
+    return response.data;
+  },
+
+  getKycData: async (): Promise<any> => {
+    const response = await apiClient.get('/api/v1/kyc/data');
     return response.data;
   },
 };
@@ -856,6 +887,7 @@ export interface UserContract {
   emailSentAt?: string;
   generatedAt: string;
   createdAt: string;
+  contractData?: Record<string, any>;
   relatedEntity?: {
     type: string;
     security: string;
@@ -929,5 +961,7 @@ export const calculateDaysToMaturity = (maturityDate: string): number => {
   const diff = maturity.getTime() - now.getTime();
   return Math.ceil(diff / (1000 * 60 * 60 * 24));
 };
+
+export { API_BASE_URL };
 
 export default apiClient;

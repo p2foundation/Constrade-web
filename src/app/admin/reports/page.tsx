@@ -135,7 +135,7 @@ export default function ReportsPage() {
                   return (
                     <button
                       key={type.value}
-                      onClick={() => setReportType(type.value)}
+                      onClick={() => setReportType(type.value as ReportType)}
                       className={`p-4 rounded-lg border-2 text-left transition-all flex items-start gap-3 ${
                         reportType === type.value
                           ? 'border-primary bg-primary/5'

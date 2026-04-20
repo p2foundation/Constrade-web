@@ -9,6 +9,8 @@ interface AnimatedCardProps {
   delay?: number;
   hover?: boolean;
   onClick?: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 export function AnimatedCard({ 
@@ -16,7 +18,9 @@ export function AnimatedCard({
   className, 
   delay = 0,
   hover = true,
-  onClick 
+  onClick,
+  onMouseEnter,
+  onMouseLeave
 }: AnimatedCardProps) {
   return (
     <div
@@ -40,6 +44,8 @@ export function AnimatedCard({
         animationFillMode: 'both'
       }}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {children}
     </div>
@@ -50,6 +56,8 @@ interface AnimatedButtonProps {
   children: ReactNode;
   className?: string;
   variant?: 'primary' | 'secondary' | 'outline';
+  size?: string;
+  type?: 'button' | 'submit' | 'reset';
   loading?: boolean;
   disabled?: boolean;
   onClick?: () => void;
@@ -59,6 +67,7 @@ export function AnimatedButton({
   children,
   className,
   variant = 'primary',
+  type = 'button',
   loading = false,
   disabled = false,
   onClick
@@ -80,6 +89,7 @@ export function AnimatedButton({
         disabled && 'opacity-50 cursor-not-allowed',
         className
       )}
+      type={type}
       onClick={onClick}
       disabled={loading || disabled}
     >

@@ -95,6 +95,6 @@ export function ListSkeleton({ items = 5, showAvatar = false }: ListSkeletonProp
 }
 
 // Utility function for cn
-function cn(...classes: string[]) {
+function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ');
 }

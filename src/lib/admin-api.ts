@@ -161,7 +161,7 @@ export const adminUsersApi = {
     return {
       activities: logs.map((log: any) => ({
         id: log.id,
-        type: this.mapActionToActivityType(log.action),
+        type: adminUsersApi.mapActionToActivityType(log.action),
         user: log.user,
         description: `${log.action} on ${log.entityType}`,
         ipAddress: log.ipAddress,

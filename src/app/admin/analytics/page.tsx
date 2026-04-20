@@ -99,10 +99,10 @@ export default function AnalyticsPage() {
   ] : [];
 
   // Format auction metrics
-  const auctionMetrics = volumeTrend?.volumeTrend?.map((item) => ({
+  const auctionMetrics = volumeTrend?.map((item) => ({
     period: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    totalVolume: item.totalAmount,
-    auctionCount: item.totalBids,
+    totalVolume: item.volume,
+    auctionCount: item.count,
   })) || [];
 
   // Comprehensive mock data for Ghana Treasury Securities

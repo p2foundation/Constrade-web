@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
@@ -25,7 +25,7 @@ import {
   Plus
 } from 'lucide-react';
 import { toast } from 'sonner';
-import api from '@/lib/api';
+import api, { kycApi } from '@/lib/api';
 
 interface KYCData {
   // Step 1: Personal Information
@@ -113,7 +113,7 @@ export default function KYCPage() {
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
     maritalStatus: '',
-    dateOfBirth: '',
+    dateOfBirth: user?.dateOfBirth || '',
     placeOfBirth: '',
     nationality: 'GHANAIAN',
     residentialStatus: 'RESIDENT',
@@ -122,13 +122,13 @@ export default function KYCPage() {
     // Step 2
     phone: user?.phone || '',
     email: user?.email || '',
-    address: '',
-    city: '',
+    address: user?.address || '',
+    city: user?.city || '',
     region: '',
-    postalCode: '',
+    postalCode: user?.postalCode || '',
     
     // Step 3
-    ghanaCardNumber: '',
+    ghanaCardNumber: user?.ghanaCardNumber || '',
     ghanaCardFront: null,
     ghanaCardBack: null,
     passportNumber: '',
@@ -136,7 +136,7 @@ export default function KYCPage() {
     idExpiryDate: '',
     
     // Step 4
-    tinNumber: '',
+    tinNumber: user?.tinNumber || '',
     tinCertificate: null,
     
     // Step 5
@@ -175,6 +175,95 @@ export default function KYCPage() {
     ).length;
     return Math.round((filledFields / totalFields) * 100);
   };
+
+  // Fetch existing KYC data on component mount
+  useEffect(() => {
+    const fetchKycData = async () => {
+      try {
+        const response = await kycApi.getKycData();
+        const data = response.data;
+        
+        // Populate form with existing data
+        setKycData(prev => ({
+          ...prev,
+          // Personal Information
+          title: data.title || '',
+          firstName: data.firstName || user?.firstName || '',
+          lastName: data.lastName || user?.lastName || '',
+          maritalStatus: data.maritalStatus || '',
+          dateOfBirth: data.dateOfBirth || '',
+          placeOfBirth: data.placeOfBirth || '',
+          nationality: data.nationality || 'GHANAIAN',
+          residentialStatus: data.residentialStatus || 'RESIDENT',
+          mothersMaidenName: data.mothersMaidenName || '',
+          
+          // Contact Information
+          phone: data.phone || user?.phone || '',
+          email: data.email || user?.email || '',
+          address: data.address || '',
+          city: data.city || '',
+          region: data.region || '',
+          postalCode: data.postalCode || '',
+          
+          // Identification
+          ghanaCardNumber: data.ghanaCardNumber || '',
+          passportNumber: data.passportNumber || '',
+          idExpiryDate: data.idExpiryDate || '',
+          
+          // Tax Information
+          tinNumber: data.tinNumber || '',
+          
+          // Employment Information
+          occupation: data.occupation || '',
+          employmentSector: data.employmentSector || '',
+          employerName: data.employerName || '',
+          employerAddress: data.employerAddress || '',
+          jobTitle: data.jobTitle || '',
+          employmentStatus: data.employmentStatus || '',
+          
+          // Financial Information
+          annualIncome: data.annualIncome || '',
+          sourceOfFunds: data.sourceOfFunds || '',
+          investmentObjective: data.investmentObjective || '',
+          riskTolerance: data.riskTolerance || '',
+          
+          // Bank Information
+          bankName: data.bankName || '',
+          accountName: data.accountName || '',
+          accountNumber: data.accountNumber || '',
+          bankBranch: data.bankBranch || '',
+          accountType: data.accountType || '',
+          
+          // CSD Account
+          csdAccountNumber: data.csdAccountNumber || '',
+          csdAccountType: data.csdAccountType || 'INDIVIDUAL',
+          nomineeName: data.nomineeName || '',
+          nomineeRelationship: data.nomineeRelationship || '',
+          beneficiaryDeclaration: data.beneficiaryDeclaration || false,
+        }));
+        
+        // Populate uploaded files
+        if (data.kycDocuments && data.kycDocuments.length > 0) {
+          const files: Record<string, string> = {};
+          data.kycDocuments.forEach((doc: any) => {
+            if (doc.documentUrl) {
+              files[doc.documentType.toLowerCase()] = doc.documentUrl;
+            }
+          });
+          setUploadedFiles(files);
+        }
+      } catch (error: any) {
+        // If no KYC data exists yet, that's fine
+        if (error.response?.status !== 404) {
+          console.error('Failed to fetch KYC data:', error);
+        }
+      }
+    };
+    
+    if (user) {
+      fetchKycData();
+    }
+  }, [user]);
 
   const handleFileUpload = async (file: File, fieldName: string) => {
     const formData = new FormData();
@@ -247,11 +336,11 @@ export default function KYCPage() {
   const submitKYC = async () => {
     try {
       setLoading(true);
-      await api.kyc.submit({
+      await kycApi.submit({
         ...kycData,
-        documents: uploadedFiles.map(file => ({
-          documentType: file.type,
-          fileUrl: file.url || file.preview || ''
+        documents: Object.entries(uploadedFiles).map(([type, url]) => ({
+          documentType: type,
+          fileUrl: url || ''
         }))
       });
       
@@ -1052,6 +1141,29 @@ export default function KYCPage() {
             <p className="text-muted-foreground">
               Complete your Know Your Customer verification to unlock full trading capabilities
             </p>
+          </div>
+
+          {/* KYC Status */}
+          <div className={`mb-8 p-4 rounded-lg border ${
+            user?.isKycVerified 
+              ? 'bg-green-500/10 border-green-500/20' 
+              : 'bg-blue-500/10 border-blue-500/20'
+          }`}>
+            <div className="flex items-center gap-3">
+              <Shield className={`h-5 w-5 ${
+                user?.isKycVerified 
+                  ? 'text-green-500' 
+                  : 'text-blue-500'
+              }`} />
+              <div>
+                <p className="font-medium">
+                  KYC Status: {user?.isKycVerified ? 'Verified' : 'Not Started'}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Complete the form below to submit your KYC application
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Progress */}

@@ -392,11 +392,6 @@ export default function CsdAccountManagementPage() {
                             {user.csdAccountNumber || 'Not created'}
                           </span>
                         </div>
-                        {user.csdRegistrationDate && (
-                          <p className="text-xs text-muted-foreground">
-                            Registered: {new Date(user.csdRegistrationDate).toLocaleDateString()}
-                          </p>
-                        )}
                       </div>
                     </td>
                     <td className="py-3 px-4">
@@ -410,16 +405,8 @@ export default function CsdAccountManagementPage() {
                     <td className="py-3 px-4">
                       <div className="text-sm">
                         <p className="text-foreground">
-                          {user.csdApplicationDate 
-                            ? new Date(user.csdApplicationDate).toLocaleDateString()
-                            : 'Not applied'
-                          }
+                          Applied: {new Date(user.createdAt).toLocaleDateString()}
                         </p>
-                        {user.csdApprovalDate && (
-                          <p className="text-muted-foreground">
-                            Approved: {new Date(user.csdApprovalDate).toLocaleDateString()}
-                          </p>
-                        )}
                       </div>
                     </td>
                     <td className="py-3 px-4">
@@ -579,28 +566,19 @@ export default function CsdAccountManagementPage() {
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Application Date</label>
                   <p className="text-foreground">
-                    {selectedUser.csdApplicationDate 
-                      ? new Date(selectedUser.csdApplicationDate).toLocaleDateString()
-                      : 'Not applied'
-                    }
+                    {new Date(selectedUser.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Registration Date</label>
                   <p className="text-foreground">
-                    {selectedUser.csdRegistrationDate 
-                      ? new Date(selectedUser.csdRegistrationDate).toLocaleDateString()
-                      : 'Not registered'
-                    }
+                    {new Date(selectedUser.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Approval Date</label>
                   <p className="text-foreground">
-                    {selectedUser.csdApprovalDate 
-                      ? new Date(selectedUser.csdApprovalDate).toLocaleDateString()
-                      : 'Not approved'
-                    }
+                    Not approved
                   </p>
                 </div>
                 <div>

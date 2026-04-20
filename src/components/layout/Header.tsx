@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronDown, TrendingUp, Wallet, BarChart3, LogIn, User, LogOut, Menu, X, Settings, Shield, Bell, CreditCard, HelpCircle, FileText, Award, Activity, Zap, ArrowUpRight, Calendar, Building2, Target } from 'lucide-react';
+import { ChevronDown, TrendingUp, Wallet, BarChart3, LogIn, User, LogOut, Menu, X, Settings, Shield, Bell, CreditCard, HelpCircle, FileText, Award, Activity, Zap, ArrowUpRight, Calendar, Building2, Target, Banknote } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -184,6 +184,18 @@ export default function Header() {
                       <p className="text-xs text-muted-foreground">Historical auction outcomes</p>
                     </div>
                   </Link>
+                  <Link
+                    href="/auctions/calendar"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all hover:bg-accent hover:text-accent-foreground group/item"
+                  >
+                    <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center group-hover/item:bg-amber-500/20 transition-colors">
+                      <Calendar className="h-4 w-4 text-amber-500" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium">Auction Calendar (Live)</p>
+                      <p className="text-xs text-muted-foreground">Real-time BoG auction schedule</p>
+                    </div>
+                  </Link>
                   </div>
                 </div>
                 
@@ -321,6 +333,40 @@ export default function Header() {
                       <div className="flex-1">
                         <p className="font-medium">Order History</p>
                         <p className="text-xs text-muted-foreground">Trade execution history</p>
+                      </div>
+                    </Link>
+                    </div>
+                  </div>
+
+                  {/* Settlement & Contracts */}
+                  <div>
+                    <div className="px-3 py-2 border-b border-border flex items-center justify-between">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Settlement & Contracts</p>
+                      <span className="text-[10px] text-muted-foreground">Operations</span>
+                    </div>
+                    <div className="grid gap-1 sm:grid-cols-2">
+                    <Link
+                      href="/trading/settlement"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all hover:bg-accent hover:text-accent-foreground group/item"
+                    >
+                      <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center group-hover/item:bg-amber-500/20 transition-colors">
+                        <Banknote className="h-4 w-4 text-amber-500" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium">Settlement Info</p>
+                        <p className="text-xs text-muted-foreground">Bank details & timeline</p>
+                      </div>
+                    </Link>
+                    <Link
+                      href="/contracts"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all hover:bg-accent hover:text-accent-foreground group/item"
+                    >
+                      <div className="h-8 w-8 rounded-lg bg-rose-500/10 flex items-center justify-center group-hover/item:bg-rose-500/20 transition-colors">
+                        <FileText className="h-4 w-4 text-rose-500" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium">Contract Notes</p>
+                        <p className="text-xs text-muted-foreground">Download & view contracts</p>
                       </div>
                     </Link>
                     </div>
@@ -749,6 +795,14 @@ export default function Header() {
               <BarChart3 className="h-5 w-5" />
               Auction Results
             </Link>
+            <Link 
+              href="/auctions/calendar" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 text-base font-medium text-foreground hover:bg-accent rounded-lg transition-colors"
+            >
+              <Calendar className="h-5 w-5" />
+              Auction Calendar (Live)
+            </Link>
             
             {/* Mobile Money Market Section */}
             <div className="border-t border-border pt-3 mt-3">
@@ -827,6 +881,25 @@ export default function Header() {
                 >
                   <Zap className="h-5 w-5" />
                   Order History
+                </Link>
+                <div className="border-t border-border pt-3 mt-3">
+                  <p className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Settlement & Contracts</p>
+                </div>
+                <Link 
+                  href="/trading/settlement" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-base font-medium text-foreground hover:bg-accent rounded-lg transition-colors"
+                >
+                  <Banknote className="h-5 w-5" />
+                  Settlement Info
+                </Link>
+                <Link 
+                  href="/contracts" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-base font-medium text-foreground hover:bg-accent rounded-lg transition-colors"
+                >
+                  <FileText className="h-5 w-5" />
+                  Contract Notes
                 </Link>
               </>
             )}

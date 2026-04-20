@@ -19,6 +19,15 @@ const nextConfig = {
     };
     return config;
   },
+  turbopack: {
+    // Turbopack configuration
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+  },
 };
 
 module.exports = nextConfig;

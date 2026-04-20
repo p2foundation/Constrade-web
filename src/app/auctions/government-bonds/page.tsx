@@ -27,8 +27,8 @@ interface GovernmentBond {
   description: string;
   minInvestment: number;
   typicalAuctionAmount: number;
-  riskLevel: 'LOW' | 'MODERATE';
-  liquidity: 'MEDIUM' | 'HIGH';
+  riskLevel: 'LOW' | 'MODERATE' | 'MEDIUM' | 'HIGH';
+  liquidity: 'LOW' | 'MEDIUM' | 'HIGH';
   couponRate?: number;
   currentYield?: number;
   paymentFrequency: string;

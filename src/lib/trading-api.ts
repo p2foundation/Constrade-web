@@ -88,6 +88,11 @@ export interface MarketData {
   lowPrice?: number;
   closePrice: number;
   lastPrice: number;
+  currentPrice?: number;
+  priceChange?: number;
+  priceChangePercent?: number;
+  high?: number;
+  low?: number;
   bidPrice?: number;
   askPrice?: number;
   bidSize?: number;

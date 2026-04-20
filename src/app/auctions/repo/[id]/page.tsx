@@ -29,6 +29,7 @@ interface RepoOperation {
     isin: string;
     type: 'TREASURY_BILL' | 'TREASURY_BOND';
     maturityDate: string;
+    prospectusUrl?: string;
   };
   repoRate: number;
   haircutPercent: number;
@@ -338,10 +339,21 @@ export default function RepoDetailPage() {
                         <DollarSign className="h-4 w-4 mr-2" />
                         Participate Now
                       </AnimatedButton>
-                      <AnimatedButton variant="outline" className="w-full">
-                        <Download className="h-4 w-4 mr-2" />
-                        Download Prospectus
-                      </AnimatedButton>
+                      {mockRepoOperation?.security?.prospectusUrl ? (
+                        <AnimatedButton 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={() => window.open(mockRepoOperation.security.prospectusUrl!, '_blank')}
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Download Prospectus
+                        </AnimatedButton>
+                      ) : (
+                        <AnimatedButton variant="outline" className="w-full" disabled>
+                          <Download className="h-4 w-4 mr-2" />
+                          Prospectus Not Available
+                        </AnimatedButton>
+                      )}
                     </>
                   ) : (
                     <>
